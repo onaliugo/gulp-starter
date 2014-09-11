@@ -18,8 +18,7 @@ domready(function() {
   bonzo($p)
     .addClass('pouet')
     .css({
-      color: '#444',
-      marginLeft: '10px'
+      color: '#444'
     });
 
   // events api for javascript
