@@ -20,7 +20,7 @@ $ gulp
 -
 Build files
 ```
-  $ gulp build
+  $ gulp generate-files --prod
 ```
 -
 Deploy
