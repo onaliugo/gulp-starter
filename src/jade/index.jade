@@ -27,11 +27,11 @@ block content
 
     if letters
       section
-        h1 For loop in last_name
+        h1 Spell my city with for loop
         p
-          - for (i=0; i<letters.length; i++)
-            span #{letters[i]}
-            if i < letters.length - 1
+          - for (i=0; i<me.city.length; i++)
+            span #{me.city[i]}
+            if i < me.city.length - 1
               | -
 
     section
