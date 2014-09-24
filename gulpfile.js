@@ -69,7 +69,9 @@ var inProd = options.prod;
       .pipe(inProd ? jade() : jade(opts.jade))
       .on('error', handleError)
       .pipe(inProd ? htmlmin(opts.htmlmin) : gutil.noop())
+      .on('error', handleError)
       .pipe(gulp.dest('./dist/'))
+      .on('error', handleError)
       .pipe(inProd ? gutil.noop() : browserReload({ stream: true }));
   });
 
@@ -81,7 +83,9 @@ var inProd = options.prod;
       .pipe(prefix('last 1 version', '> 1%', 'ie 8', 'ie 7'))
       .on('error', handleError)
       .pipe(inProd ? cssmin() : gutil.noop())
+      .on('error', handleError)
       .pipe(gulp.dest('./dist/css/'))
+      .on('error', handleError)
       .pipe(inProd ? gutil.noop() : browserReload({ stream: true }));
   });
 
@@ -95,8 +99,11 @@ var inProd = options.prod;
       .bundle()
       .on('error', handleError)
       .pipe(source('app.js'))
+      .on('error', handleError)
       .pipe(inProd ? streamify(uglify()) : gutil.noop())
+      .on('error', handleError)
       .pipe(gulp.dest('dist/js/'))
+      .on('error', handleError)
       .pipe(inProd ? gutil.noop() : browserReload({ stream: true, once: true}));
   });
 
@@ -104,6 +111,7 @@ var inProd = options.prod;
   gulp.task('fonts', function(){
     return gulp.src('./src/fonts/**')
       .pipe(gulp.dest('./dist/fonts/'))
+      .on('error', handleError);
   });
 
 // imgs task
@@ -114,7 +122,8 @@ var inProd = options.prod;
         svgoPlugins: [{removeViewBox: false}],
         use: [pngcrush()]
       }) : gutil.noop())
-      .pipe(gulp.dest('dist/imgs/'));
+      .pipe(gulp.dest('dist/imgs/'))
+      .on('error', handleError);
   });
 
 // watch task
