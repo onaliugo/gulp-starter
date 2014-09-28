@@ -142,7 +142,6 @@ var inProd = options.prod;
 
 // group tasks
   gulp.task('generate-files', [
-    'prebuild',
     'html',
     'imgs',
     'fonts',
