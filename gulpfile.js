@@ -64,7 +64,7 @@ var inProd = options.prod;
   gulp.task('html', function(){
     if(inProd)
       del('dist/*.html', opts.del);
-    
+
     return gulp.src(['./src/jade/**/*.jade', '!./src/jade/partials/**'])
       .pipe(inProd ? jade() : jade(opts.jade))
       .on('error', handleError)
