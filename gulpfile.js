@@ -30,9 +30,15 @@ var pngcrush = require('imagemin-pngcrush');
 
 // opts
 var opts = {
-  del: { force: true },
-  jade: { pretty: true },
-  htmlmin: { comments: false },
+  del: {
+    force: true
+  },
+  jade: {
+    pretty: true
+  },
+  htmlmin: {
+    comments: false
+  },
   sass: {
     sourceMap: 'none',
     sourceComments: 'map'
