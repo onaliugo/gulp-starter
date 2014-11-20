@@ -15,11 +15,11 @@
   @if  $type == "r"
     or $type == "a"
     or $type == "f" {
-  
+
       @if      $type == "r" { position: relative; }
       @else if $type == "a" { position: absolute; }
       @else if $type == "f" { position: fixed; }
-      
+
       @if $top    != "x" { top: $top; }
       @if $right  != "x" { right: $right; }
       @if $bottom != "x" { bottom: $bottom; }
