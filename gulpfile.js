@@ -18,6 +18,7 @@ var cssmin  = require('gulp-cssmin');
 
 // js
 var browserify = require('browserify');
+var watchify = require('watchify');
 var source = require('vinyl-source-stream');
 var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
@@ -27,6 +28,9 @@ var uglify = require('gulp-uglify');
 // imgs
 var imagemin = require('gulp-imagemin');
 var pngcrush = require('imagemin-pngcrush');
+
+// env
+var inProd = options.prod;
 
 // opts
 var opts = {
@@ -44,17 +48,13 @@ var opts = {
     sourceComments: 'map'
   },
   browserify: {
-    debug: true,
-    insertGlobals: false
+    debug: !inProd
   },
   browserSync: {
     // open: false,
     server: { baseDir: 'dist/' }
   }
 };
-
-// env
-var inProd = options.prod;
 
 
 // handle errors
@@ -97,20 +97,27 @@ var inProd = options.prod;
 
 // js task
   gulp.task('js', function(){
+    var bundler = browserify('./src/js/app.js', opts);
+
+    bundler = inProd ? bundler : watchify(bundler);
+
     gulp.src('./src/js/**/*.js')
       .pipe(jshint())
       .pipe(jshint.reporter('jshint-stylish'));
 
-    return browserify('./src/js/app.js', inProd ? gutil.noop() : opts.browserify)
-      .bundle()
-      .on('error', handleError)
-      .pipe(source('app.js'))
-      .on('error', handleError)
-      .pipe(inProd ? streamify(uglify()) : gutil.noop())
-      .on('error', handleError)
-      .pipe(gulp.dest('dist/js/'))
-      .on('error', handleError)
-      .pipe(inProd ? gutil.noop() : browserReload({ stream: true, once: true}));
+    bundler.transform('brfs');
+    bundler.on('update', rebundle);
+
+    function rebundle() {
+      return bundler.bundle()
+        .on('error', handleError)
+        .pipe(source('app.js'))
+        .pipe(inProd ? streamify(uglify()) : gutil.noop())
+        .pipe(gulp.dest('dist/js'))
+        .pipe(inProd ? gutil.noop() : browserReload({ stream: true, once: true}));
+    }
+
+    return rebundle();
   });
 
 // webfonts task
@@ -134,7 +141,6 @@ var inProd = options.prod;
 
 // watch task
   gulp.task('watch', function(){
-    gulp.watch('src/js/**',    ['js']);
     gulp.watch('src/scss/**',  ['css']);
     gulp.watch('src/jade/**',  ['html']);
     gulp.watch('src/imgs/**',  ['imgs']);
@@ -157,6 +163,7 @@ var inProd = options.prod;
   gulp.task('default', [
     'generate-files',
     'serve',
+    'js',
     'watch'
   ]);
 
