@@ -563,6 +563,20 @@ textarea {
 
 
 /*
+ * Remove top shadow's input on mobile
+ * http://davidwalsh.name/input-shadows-ipad
+ */
+input[type="text"],
+input[type="email"],
+input[type="search"],
+input[type="password"] {
+  -webkit-appearance: caret;
+  -moz-appearance: caret;
+}
+
+
+
+/*
  * Personal improvements
  */
 i {
