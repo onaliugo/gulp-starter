@@ -77,7 +77,6 @@ var opts = {
       .pipe(inProd ? htmlmin(opts.htmlmin) : gutil.noop())
       .on('error', handleError)
       .pipe(gulp.dest('./dist/'))
-      .on('error', handleError)
       .pipe(inProd ? gutil.noop() : browserReload({ stream: true }));
   });
 
@@ -91,7 +90,6 @@ var opts = {
       .pipe(inProd ? cssmin() : gutil.noop())
       .on('error', handleError)
       .pipe(gulp.dest('./dist/css/'))
-      .on('error', handleError)
       .pipe(inProd ? gutil.noop() : browserReload({ stream: true }));
   });
 
@@ -113,6 +111,7 @@ var opts = {
         .on('error', handleError)
         .pipe(source('app.js'))
         .pipe(inProd ? streamify(uglify()) : gutil.noop())
+        .on('error', handleError)
         .pipe(gulp.dest('dist/js'))
         .pipe(inProd ? gutil.noop() : browserReload({ stream: true, once: true}));
     }
@@ -123,8 +122,7 @@ var opts = {
 // webfonts task
   gulp.task('fonts', function(){
     return gulp.src('./src/fonts/**')
-      .pipe(gulp.dest('./dist/fonts/'))
-      .on('error', handleError);
+      .pipe(gulp.dest('./dist/fonts/'));
   });
 
 // imgs task
@@ -135,8 +133,8 @@ var opts = {
         svgoPlugins: [{removeViewBox: false}],
         use: [pngcrush()]
       }) : gutil.noop())
-      .pipe(gulp.dest('dist/imgs/'))
-      .on('error', handleError);
+      .on('error', handleError)
+      .pipe(gulp.dest('dist/imgs/'));
   });
 
 // watch task
