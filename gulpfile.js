@@ -161,7 +161,6 @@ var opts = {
   gulp.task('default', [
     'generate-files',
     'serve',
-    'js',
     'watch'
   ]);
 
