@@ -18,11 +18,9 @@ var cssmin  = require('gulp-cssmin');
 
 // js
 var browserify = require('browserify');
-var watchify = require('watchify');
-var source = require('vinyl-source-stream');
+var transform = require('vinyl-transform');
 var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
-var streamify = require('gulp-streamify');
 var uglify = require('gulp-uglify');
 
 // imgs
@@ -95,28 +93,20 @@ var opts = {
 
 // js task
   gulp.task('js', function(){
-    var bundler = browserify('./src/js/app.js', opts);
-
-    bundler = inProd ? bundler : watchify(bundler);
+    var browserified = transform(function (filename) {
+      var b = browserify(filename);
+      return b.bundle();
+    });
 
     gulp.src('./src/js/**/*.js')
       .pipe(jshint())
-      .pipe(jshint.reporter('jshint-stylish'));
-
-    bundler.transform('brfs');
-    bundler.on('update', rebundle);
-
-    function rebundle() {
-      return bundler.bundle()
-        .on('error', handleError)
-        .pipe(source('app.js'))
-        .pipe(inProd ? streamify(uglify()) : gutil.noop())
-        .on('error', handleError)
-        .pipe(gulp.dest('dist/js'))
-        .pipe(inProd ? gutil.noop() : browserReload({ stream: true, once: true}));
-    }
-
-    return rebundle();
+      .pipe(jshint.reporter('jshint-stylish'))
+      .pipe(browserified)
+      .on('error', handleError)
+      .pipe(inProd ? uglify() : gutil.noop())
+      .on('error', handleError)
+      .pipe(gulp.dest('dist/js'))
+      .pipe(inProd ? gutil.noop() : browserReload({ stream: true, once: true}));
   });
 
 // webfonts task
@@ -139,6 +129,7 @@ var opts = {
 
 // watch task
   gulp.task('watch', function(){
+    gulp.watch('src/js/**',    ['js']);
     gulp.watch('src/scss/**',  ['css']);
     gulp.watch('src/jade/**',  ['html']);
     gulp.watch('src/imgs/**',  ['imgs']);
